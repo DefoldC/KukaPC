@@ -17,11 +17,14 @@ namespace MxAutomation_Example{
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
-		[STAThread]
+		
+		public static readKukaFile _readKukaFile = new readKukaFile(); // объявление класса для чтения файла
+
+        [STAThread]
 		static void Main() {
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new MainView());
-		}
+        }
 	}
 }

@@ -73,6 +73,9 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.textBox13 = new System.Windows.Forms.TextBox();
+            this.bChangeKukFile = new System.Windows.Forms.Button();
+            this.openKukaFile = new System.Windows.Forms.OpenFileDialog();
+            this.bStartReadKukFile = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbOverride)).BeginInit();
@@ -163,6 +166,8 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.bStartReadKukFile);
+            this.groupBox3.Controls.Add(this.bChangeKukFile);
             this.groupBox3.Controls.Add(this.panel2);
             this.groupBox3.Controls.Add(this.label1);
             this.groupBox3.Controls.Add(this.label9);
@@ -436,6 +441,26 @@
             resources.ApplyResources(this.textBox13, "textBox13");
             this.textBox13.Name = "textBox13";
             // 
+            // bChangeKukFile
+            // 
+            this.bChangeKukFile.Cursor = System.Windows.Forms.Cursors.Hand;
+            resources.ApplyResources(this.bChangeKukFile, "bChangeKukFile");
+            this.bChangeKukFile.Name = "bChangeKukFile";
+            this.bChangeKukFile.UseVisualStyleBackColor = true;
+            this.bChangeKukFile.Click += new System.EventHandler(this.buttonOpenKukaFile_Click);
+            // 
+            // openKukaFile
+            // 
+            this.openKukaFile.FileOk += new System.ComponentModel.CancelEventHandler(this.openKukaFile_FileOk);
+            // 
+            // bStartReadKukFile
+            // 
+            this.bStartReadKukFile.Cursor = System.Windows.Forms.Cursors.Hand;
+            resources.ApplyResources(this.bStartReadKukFile, "bStartReadKukFile");
+            this.bStartReadKukFile.Name = "bStartReadKukFile";
+            this.bStartReadKukFile.UseVisualStyleBackColor = true;
+            this.bStartReadKukFile.Click += new System.EventHandler(this.buttonReadKukaFile_Click);
+            // 
             // MainView
             // 
             this.AllowDrop = true;
@@ -525,6 +550,9 @@
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.TextBox textBox13;
         private System.Windows.Forms.Label label1;
-	}
+        private System.Windows.Forms.Button bChangeKukFile;
+        private System.Windows.Forms.OpenFileDialog openKukaFile;
+        private System.Windows.Forms.Button bStartReadKukFile;
+    }
 }
 

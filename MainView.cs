@@ -474,6 +474,18 @@ namespace MxAutomation_Example
         {
             _reset = true;
         }
+        private void openKukaFile_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Program._readKukaFile.pathKukaFile = openKukaFile.FileName; // Событие измениения пути до файла в объявленном классе чтения файла
+        }
+        private void buttonOpenKukaFile_Click(object sender, EventArgs e)
+        {
+            openKukaFile.ShowDialog();  // Событие нажатия кнопки открытия файла и показ проводника
+        }
+        private void buttonReadKukaFile_Click(object sender, EventArgs e)
+        {
+            Program._readKukaFile.Start();   // Событие нажатия кнопки Старта чтения файла
+        }
         #endregion
 
         #region internal
