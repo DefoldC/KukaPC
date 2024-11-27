@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using System.IO;
 
 namespace MxAutomation_Example
@@ -19,7 +20,6 @@ namespace MxAutomation_Example
 
             StreamReader sr = new StreamReader(pathKukaFile);
             string line = sr.ReadLine();
-
             while (line != null)
             {
                 pieces = line.Split(separators);
@@ -38,7 +38,7 @@ namespace MxAutomation_Example
                         coords = Disect(pieces);
                         foreach (var entry in coords)
                         {
-                            Console.Write(entry + " ");
+                            Debug.WriteLine(entry + " ");
                         }
                         Console.WriteLine();
                         // foreach (var e in pieces)
