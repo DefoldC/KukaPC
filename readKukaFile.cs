@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
+using MxA;
 
 namespace MxAutomation_Example
 {
     class readKukaFile
     {
         public string pathKukaFile;  // полный путь до файла (изменяется при нажатии кнопки "Выбрать фаил")
-        public void Start()
+        public void Start(ref E6AXIS posAx, ref E6POS posCar1, ref E6POS posCar2)
         {
             char[] separators = new char[] { '{', '}' };
             string workingDirectory = Environment.CurrentDirectory;
@@ -31,14 +32,14 @@ namespace MxAutomation_Example
                 {
                     if (pieces[0].Contains("PTP"))
                     {
-                        //Disect(pieces);
+                        //Disect(pieces);                    
                     }
                     else if (pieces[0].Contains("LIN"))
                     {
                         coords = Disect(pieces);
                         foreach (var entry in coords)
                         {
-                            Debug.WriteLine(entry + " ");
+                            //Debug.WriteLine(entry + " ");
                         }
                         Console.WriteLine();
                         // foreach (var e in pieces)
@@ -46,6 +47,26 @@ namespace MxAutomation_Example
                     }
                     else if (pieces[0].Contains("CIRC"))
                     {
+                    	coords = Disect(pieces);
+                        foreach (var entry in coords)
+                        {
+                            //Debug.WriteLine(entry + " ");
+                        }
+                        Debug.WriteLine(coords[0]);
+                        
+                        posCar1.X = (float)coords[0];
+                    	//MainView._cartesianPosition1.Y = (float)coords[1];
+                    	//MainView._cartesianPosition1.Z = (float)coords[2];
+                    	//MainView._cartesianPosition1.A = (float)coords[3];
+                    	//MainView._cartesianPosition1.B = (float)coords[4];
+                    	//MainView._cartesianPosition1.C = (float)coords[5];
+                    	
+                    	//MainView._cartesianPosition2.X = (float)coords[6];
+                    	//MainView._cartesianPosition2.Y = (float)coords[7];
+                    	//MainView._cartesianPosition2.Z = (float)coords[8];
+                    	//MainView._cartesianPosition2.A = (float)coords[9];
+                    	//MainView._cartesianPosition2.B = (float)coords[10];
+                    	//MainView._cartesianPosition2.C = (float)coords[11];
                     }
                 }
                 //  foreach (var e in pieces)

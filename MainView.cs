@@ -30,6 +30,8 @@ namespace MxAutomation_Example
         private readonly short _axisGroupIdx = 1;
         private bool _confirmMessages;
 
+        private readonly readKukaFile _readKukaFile = new readKukaFile(); // объявление класса для чтения файла
+        
         //Miscellany     
         private int _counter;
         private Point _mouseposition;
@@ -37,8 +39,10 @@ namespace MxAutomation_Example
         private bool _moveToPos2;
         private long _myCycle;
         private short _overrideToSet;
-        private readonly E6AXIS _position1;
-        private readonly E6AXIS _position2;
+        public  E6AXIS _position1;
+        public readonly E6AXIS _position2;
+        public E6POS _cartesianPosition1;
+        public  E6POS _cartesianPosition2;
         private IPEndPoint _receiveEndPoint;
 
         //Byte arrays for the communication
@@ -124,6 +128,28 @@ namespace MxAutomation_Example
                 A4 = (float)Convert.ToDouble(textBox9.Text, CultureInfo.InvariantCulture),
                 A5 = (float)Convert.ToDouble(textBox8.Text, CultureInfo.InvariantCulture),
                 A6 = (float)Convert.ToDouble(textBox7.Text, CultureInfo.InvariantCulture)
+
+
+            };
+            _cartesianPosition1 = new E6POS
+            {
+                X = (float)Convert.ToDouble(textBox12.Text, CultureInfo.InvariantCulture),
+                Y = (float)Convert.ToDouble(textBox11.Text, CultureInfo.InvariantCulture),
+                Z = (float)Convert.ToDouble(textBox10.Text, CultureInfo.InvariantCulture),
+                A = (float)Convert.ToDouble(textBox9.Text, CultureInfo.InvariantCulture),
+                B = (float)Convert.ToDouble(textBox8.Text, CultureInfo.InvariantCulture),
+                C = (float)Convert.ToDouble(textBox7.Text, CultureInfo.InvariantCulture)
+
+
+            };
+            _cartesianPosition2 = new E6POS
+            {
+                X = (float)Convert.ToDouble(textBox12.Text, CultureInfo.InvariantCulture),
+                Y = (float)Convert.ToDouble(textBox11.Text, CultureInfo.InvariantCulture),
+                Z = (float)Convert.ToDouble(textBox10.Text, CultureInfo.InvariantCulture),
+                A = (float)Convert.ToDouble(textBox9.Text, CultureInfo.InvariantCulture),
+                B = (float)Convert.ToDouble(textBox8.Text, CultureInfo.InvariantCulture),
+                C = (float)Convert.ToDouble(textBox7.Text, CultureInfo.InvariantCulture)
 
 
             };
@@ -476,7 +502,7 @@ namespace MxAutomation_Example
         }
         private void openKukaFile_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Program._readKukaFile.pathKukaFile = openKukaFile.FileName; // Событие измениения пути до файла в объявленном классе чтения файла
+            _readKukaFile.pathKukaFile = openKukaFile.FileName; // Событие измениения пути до файла в объявленном классе чтения файла
         }
         private void buttonOpenKukaFile_Click(object sender, EventArgs e)
         {
@@ -484,7 +510,7 @@ namespace MxAutomation_Example
         }
         private void buttonReadKukaFile_Click(object sender, EventArgs e)
         {
-            Program._readKukaFile.Start();   // Событие нажатия кнопки Старта чтения файла
+            _readKukaFile.Start(ref _position1,ref _cartesianPosition1,ref _cartesianPosition2);   // Событие нажатия кнопки Старта чтения файла
         }
         #endregion
 

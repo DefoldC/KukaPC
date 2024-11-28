@@ -17,8 +17,6 @@ namespace MxAutomation_Example{
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
-		
-		public static readKukaFile _readKukaFile = new readKukaFile(); // объявление класса для чтения файла
 
         [STAThread]
 		static void Main() {
