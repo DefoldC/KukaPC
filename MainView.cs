@@ -35,12 +35,12 @@ namespace MxAutomation_Example
         //Miscellany     
         private int _counter;
         private Point _mouseposition;
-        private bool _moveToPos1;
-        private bool _moveToPos2;
+        private bool _moveToPosPTP;
+        private bool _moveToPosLIN;
+        private bool _moveToPosCIRC;
         private long _myCycle;
         private short _overrideToSet;
-        public  E6AXIS _position1;
-        public readonly E6AXIS _position2;
+        public  E6AXIS _axisPosition;
         public E6POS _cartesianPosition1;
         public  E6POS _cartesianPosition2;
         private IPEndPoint _receiveEndPoint;
@@ -56,8 +56,9 @@ namespace MxAutomation_Example
         private readonly KRC_AUTOMATICEXTERNAL _mxAKrcAutomaticExternal;
         private readonly KRC_READACTUALAXISPOSITION _mxAKrcReadactualaxisposition;
         private readonly KRC_SETOVERRIDE _mxAKrcSetOverride;
-        private readonly KRC_MOVEAXISABSOLUTE _mxAMoveAxisAbsolute1;
-        private readonly KRC_MOVEAXISABSOLUTE _mxAMoveAxisAbsolute2;
+        private readonly KRC_MOVEAXISABSOLUTE _mxAMoveAxisAbsolute;
+        private readonly KRC_MOVELINEARABSOLUTE _mxAMoveLinearAbsolute;
+        private readonly KRC_MOVECIRCABSOLUTE _mxAMoveCircAbsolute;
         private readonly KRC_READAXISGROUP _mxARag;
         private readonly KRC_WRITEAXISGROUP _mxAWag;
         private readonly KRC_DIAG _mxAKrcDiag;
@@ -89,8 +90,9 @@ namespace MxAutomation_Example
             _mxAInit = new KRC_INITIALIZE();
             _mxAKrcSetOverride = new KRC_SETOVERRIDE();
             _mxAKrcAutomaticExternal = new KRC_AUTOMATICEXTERNAL();
-            _mxAMoveAxisAbsolute1 = new KRC_MOVEAXISABSOLUTE();
-            _mxAMoveAxisAbsolute2 = new KRC_MOVEAXISABSOLUTE();
+            _mxAMoveAxisAbsolute = new KRC_MOVEAXISABSOLUTE();
+            _mxAMoveLinearAbsolute = new KRC_MOVELINEARABSOLUTE();
+            _mxAMoveCircAbsolute = new KRC_MOVECIRCABSOLUTE();
             _mxAError = new KRC_ERROR();
             _mxAKrcReadactualaxisposition = new KRC_READACTUALAXISPOSITION();
             _mxAKrcAbort = new KRC_ABORT();
@@ -107,9 +109,9 @@ namespace MxAutomation_Example
             _confirmMessages = false;
             _reset = false;
             _overrideToSet = 10;
-            _moveToPos1 = false;
-            _moveToPos2 = false;
-            _position1 = new E6AXIS
+            _moveToPosPTP = false;
+            _moveToPosLIN = false;
+            _axisPosition = new E6AXIS
             {
                 A1 = (float)Convert.ToDouble(textBox1.Text, CultureInfo.InvariantCulture),
                 A2 = (float)Convert.ToDouble(textBox2.Text, CultureInfo.InvariantCulture),
@@ -120,14 +122,14 @@ namespace MxAutomation_Example
 
 
             };
-            _position2 = new E6AXIS
+            _cartesianPosition1 = new E6POS
             {
-                A1 = (float)Convert.ToDouble(textBox12.Text, CultureInfo.InvariantCulture),
-                A2 = (float)Convert.ToDouble(textBox11.Text, CultureInfo.InvariantCulture),
-                A3 = (float)Convert.ToDouble(textBox10.Text, CultureInfo.InvariantCulture),
-                A4 = (float)Convert.ToDouble(textBox9.Text, CultureInfo.InvariantCulture),
-                A5 = (float)Convert.ToDouble(textBox8.Text, CultureInfo.InvariantCulture),
-                A6 = (float)Convert.ToDouble(textBox7.Text, CultureInfo.InvariantCulture)
+                X = (float)Convert.ToDouble(textBox12.Text, CultureInfo.InvariantCulture),
+                Y = (float)Convert.ToDouble(textBox11.Text, CultureInfo.InvariantCulture),
+                Z = (float)Convert.ToDouble(textBox10.Text, CultureInfo.InvariantCulture),
+                A = (float)Convert.ToDouble(textBox9.Text, CultureInfo.InvariantCulture),
+                B = (float)Convert.ToDouble(textBox8.Text, CultureInfo.InvariantCulture),
+                C = (float)Convert.ToDouble(textBox7.Text, CultureInfo.InvariantCulture)
 
 
             };
@@ -201,8 +203,8 @@ namespace MxAutomation_Example
                 
                 if (_reset)
                 {
-                    _moveToPos1 = false;
-                    _moveToPos2 = false;
+                    _moveToPosPTP = false;
+                    _moveToPosLIN = false;
                     _mxAKrcAbort.OnCycle();
                 }
                 else if (_resetCount == 0)
@@ -210,31 +212,31 @@ namespace MxAutomation_Example
                     _confirmMessages = false;
 
                     //Move to position 1
-                    _mxAMoveAxisAbsolute1.AXISGROUPIDX = _axisGroupIdx;
-                    _mxAMoveAxisAbsolute1.EXECUTECMD = _moveToPos1;
-                    _mxAMoveAxisAbsolute1.AXISPOSITION = _position1;
-                    _mxAMoveAxisAbsolute1.VELOCITY = 0;
-                    _mxAMoveAxisAbsolute1.ACCELERATION = 0;
-                    _mxAMoveAxisAbsolute1.BUFFERMODE = 2;
-                    _mxAMoveAxisAbsolute1.OnCycle();
+                    _mxAMoveAxisAbsolute.AXISGROUPIDX = _axisGroupIdx;
+                    _mxAMoveAxisAbsolute.EXECUTECMD = _moveToPosPTP;
+                    _mxAMoveAxisAbsolute.AXISPOSITION = _axisPosition;
+                    _mxAMoveAxisAbsolute.VELOCITY = 0;
+                    _mxAMoveAxisAbsolute.ACCELERATION = 0;
+                    _mxAMoveAxisAbsolute.BUFFERMODE = 2;
+                    _mxAMoveAxisAbsolute.OnCycle();
 
-                    if (_mxAMoveAxisAbsolute1.DONE)
+                    if (_mxAMoveAxisAbsolute.DONE)
                     {
-                        _moveToPos1 = false;
+                        _moveToPosPTP = false;
                     }
 
                     //Move to position 2
-                    _mxAMoveAxisAbsolute2.AXISGROUPIDX = _axisGroupIdx;
-                    _mxAMoveAxisAbsolute2.EXECUTECMD = _moveToPos2;
-                    _mxAMoveAxisAbsolute2.AXISPOSITION = _position2;
-                    _mxAMoveAxisAbsolute2.VELOCITY = 0;
-                    _mxAMoveAxisAbsolute2.ACCELERATION = 0;
-                    _mxAMoveAxisAbsolute2.BUFFERMODE = 2;
-                    _mxAMoveAxisAbsolute2.OnCycle();
+                    _mxAMoveLinearAbsolute.AXISGROUPIDX = _axisGroupIdx;
+                    _mxAMoveLinearAbsolute.EXECUTECMD = _moveToPosLIN;
+                    _mxAMoveLinearAbsolute.ACTPOSITION = _cartesianPosition1;
+                    _mxAMoveLinearAbsolute.VELOCITY = 0;
+                    _mxAMoveLinearAbsolute.ACCELERATION = 0;
+                    _mxAMoveLinearAbsolute.BUFFERMODE = 2;
+                    _mxAMoveLinearAbsolute.OnCycle();
 
-                    if (_mxAMoveAxisAbsolute2.DONE)
+                    if (_mxAMoveLinearAbsolute.DONE)
                     {
-                        _moveToPos2 = false;
+                        _moveToPosLIN = false;
                     }
                 }
 
@@ -458,36 +460,36 @@ namespace MxAutomation_Example
         {
             try
             {
-                _position1.A1 = (float)Convert.ToDouble(textBox1.Text, CultureInfo.InvariantCulture);
-                _position1.A2 = (float)Convert.ToDouble(textBox2.Text, CultureInfo.InvariantCulture);
-                _position1.A3 = (float)Convert.ToDouble(textBox3.Text, CultureInfo.InvariantCulture);
-                _position1.A4 = (float)Convert.ToDouble(textBox4.Text, CultureInfo.InvariantCulture);
-                _position1.A5 = (float)Convert.ToDouble(textBox5.Text, CultureInfo.InvariantCulture);
-                _position1.A6 = (float)Convert.ToDouble(textBox6.Text, CultureInfo.InvariantCulture);
+                _axisPosition.A1 = (float)Convert.ToDouble(textBox1.Text, CultureInfo.InvariantCulture);
+                _axisPosition.A2 = (float)Convert.ToDouble(textBox2.Text, CultureInfo.InvariantCulture);
+                _axisPosition.A3 = (float)Convert.ToDouble(textBox3.Text, CultureInfo.InvariantCulture);
+                _axisPosition.A4 = (float)Convert.ToDouble(textBox4.Text, CultureInfo.InvariantCulture);
+                _axisPosition.A5 = (float)Convert.ToDouble(textBox5.Text, CultureInfo.InvariantCulture);
+                _axisPosition.A6 = (float)Convert.ToDouble(textBox6.Text, CultureInfo.InvariantCulture);
             }
             catch (Exception se)
             {
                 Debug("Text conversation: " + se.Message);
             }
-            _moveToPos1 = true;
+            _moveToPosPTP = true;
         }
 
         private void bMoveToPos2_Click(object sender, EventArgs e)
         {
             try
             {
-                _position2.A1 = (float)Convert.ToDouble(textBox12.Text, CultureInfo.InvariantCulture);
-                _position2.A2 = (float)Convert.ToDouble(textBox11.Text, CultureInfo.InvariantCulture);
-                _position2.A3 = (float)Convert.ToDouble(textBox10.Text, CultureInfo.InvariantCulture);
-                _position2.A4 = (float)Convert.ToDouble(textBox9.Text, CultureInfo.InvariantCulture);
-                _position2.A5 = (float)Convert.ToDouble(textBox8.Text, CultureInfo.InvariantCulture);
-                _position2.A6 = (float)Convert.ToDouble(textBox7.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition1.X = (float)Convert.ToDouble(textBox12.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition1.Y = (float)Convert.ToDouble(textBox11.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition1.Z = (float)Convert.ToDouble(textBox10.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition1.A = (float)Convert.ToDouble(textBox9.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition1.B = (float)Convert.ToDouble(textBox8.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition1.C = (float)Convert.ToDouble(textBox7.Text, CultureInfo.InvariantCulture);
             }
             catch (Exception se)
             {
                 Debug("Text conversation: " + se.Message);
             }
-            _moveToPos2 = true;
+            _moveToPosLIN = true;
         }
 
         private void button_closeme_Click(object sender, EventArgs e)
@@ -502,7 +504,7 @@ namespace MxAutomation_Example
         }
         private void openKukaFile_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            _readKukaFile.pathKukaFile = openKukaFile.FileName; // Событие измениения пути до файла в объявленном классе чтения файла
+        	_readKukaFile.init(openKukaFile.FileName); // Событие измениения пути до файла в объявленном классе чтения файла
         }
         private void buttonOpenKukaFile_Click(object sender, EventArgs e)
         {
@@ -510,7 +512,7 @@ namespace MxAutomation_Example
         }
         private void buttonReadKukaFile_Click(object sender, EventArgs e)
         {
-            _readKukaFile.Start(ref _position1,ref _cartesianPosition1,ref _cartesianPosition2);   // Событие нажатия кнопки Старта чтения файла
+            _readKukaFile.Read(ref _axisPosition,ref _cartesianPosition1,ref _cartesianPosition2);   // Событие нажатия кнопки Старта чтения файла
         }
         #endregion
 

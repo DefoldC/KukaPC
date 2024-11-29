@@ -11,18 +11,23 @@ namespace MxAutomation_Example
 {
     class readKukaFile
     {
-        public string pathKukaFile;  // полный путь до файла (изменяется при нажатии кнопки "Выбрать фаил")
-        public void Start(ref E6AXIS posAx, ref E6POS posCar1, ref E6POS posCar2)
-        {
-            char[] separators = new char[] { '{', '}' };
-            string workingDirectory = Environment.CurrentDirectory;
-            string[] pieces = new string[] { };
-            List<double> coords = new List<double> { };
+        //public string pathKukaFile;  // полный путь до файла (изменяется при нажатии кнопки "Выбрать фаил")
+        public char[] separators = new char[] { '{', '}' };
+        public string[] pieces = new string[] { };
+        public List<double> coords = new List<double> { };
 
-            StreamReader sr = new StreamReader(pathKukaFile);
-            string line = sr.ReadLine();
-            while (line != null)
-            {
+        public StreamReader sr;
+        public string line;
+        
+        public void init(string pathKukaFile){
+        	sr = new StreamReader(pathKukaFile);
+        	line = sr.ReadLine();
+        }
+        
+        public void Read(ref E6AXIS posAx, ref E6POS posCar1, ref E6POS posCar2)
+        {
+            //while (line != null)
+            //{
                 pieces = line.Split(separators);
                 if (pieces[0].Contains("$"))
                 {
@@ -30,51 +35,61 @@ namespace MxAutomation_Example
                 }
                 else
                 {
-                    if (pieces[0].Contains("PTP"))
+                    if (pieces[0].Contains("PTP "))
                     {
-                        //Disect(pieces);                    
-                    }
-                    else if (pieces[0].Contains("LIN"))
-                    {
+                    	Debug.Write("PTP ");
                         coords = Disect(pieces);
-                        foreach (var entry in coords)
-                        {
-                            //Debug.WriteLine(entry + " ");
-                        }
-                        Console.WriteLine();
-                        // foreach (var e in pieces)
-                        //      Console.WriteLine(e);
+                    	foreach (var entry in coords){Debug.Write(entry+" ");}
+                    	Debug.WriteLine("");
+                        //Disect(pieces);
+						posAx.A1 = (float)coords[0];
+						posAx.A2 = (float)coords[1];
+						posAx.A3 = (float)coords[2];
+						posAx.A4 = (float)coords[3];
+						posAx.A5 = (float)coords[4];
+						posAx.A6 = (float)coords[5];						
                     }
-                    else if (pieces[0].Contains("CIRC"))
+                    else if (pieces[0].Contains("LIN "))
                     {
-                    	coords = Disect(pieces);
-                        foreach (var entry in coords)
-                        {
-                            //Debug.WriteLine(entry + " ");
-                        }
-                        Debug.WriteLine(coords[0]);
-                        
-                        posCar1.X = (float)coords[0];
-                    	//MainView._cartesianPosition1.Y = (float)coords[1];
-                    	//MainView._cartesianPosition1.Z = (float)coords[2];
-                    	//MainView._cartesianPosition1.A = (float)coords[3];
-                    	//MainView._cartesianPosition1.B = (float)coords[4];
-                    	//MainView._cartesianPosition1.C = (float)coords[5];
-                    	
-                    	//MainView._cartesianPosition2.X = (float)coords[6];
-                    	//MainView._cartesianPosition2.Y = (float)coords[7];
-                    	//MainView._cartesianPosition2.Z = (float)coords[8];
-                    	//MainView._cartesianPosition2.A = (float)coords[9];
-                    	//MainView._cartesianPosition2.B = (float)coords[10];
-                    	//MainView._cartesianPosition2.C = (float)coords[11];
+                    	Debug.Write("LIN ");
+                        coords = Disect(pieces);
+                    	foreach (var entry in coords){Debug.Write(entry+" ");}
+                    	Debug.WriteLine("");
+                    	posCar1.X = (float)coords[0];
+                        posCar1.Y = (float)coords[1];
+                        posCar1.Z = (float)coords[2];
+                        posCar1.A = (float)coords[3];
+                        posCar1.B = (float)coords[4];
+                        posCar1.C = (float)coords[5];
                     }
+                    else if (pieces[0].Contains("CIRC "))
+                    {
+                    	Debug.Write("CIRC ");
+                    	coords = Disect(pieces);
+                        foreach (var entry in coords){Debug.Write(entry+" ");}
+                        Debug.WriteLine("");
+                        posCar1.X = (float)coords[0];
+                        posCar1.Y = (float)coords[1];
+                        posCar1.Z = (float)coords[2];
+                        posCar1.A = (float)coords[3];
+                        posCar1.B = (float)coords[4];
+                        posCar1.C = (float)coords[5];
+                    	
+                    	posCar2.X = (float)coords[6];
+                        posCar2.Y = (float)coords[7];
+                        posCar2.Z = (float)coords[8];
+                        posCar2.A = (float)coords[9];
+                        posCar2.B = (float)coords[10];
+                        posCar2.C = (float)coords[11];
+                    }
+                    //Debug.WriteLine(pieces[0]);
                 }
                 //  foreach (var e in pieces)
                 //    Console.WriteLine(e);
                 line = sr.ReadLine();
-            }
-            sr.Close();
-            Console.ReadLine();
+            //}
+            //sr.Close();
+            //Console.ReadLine();
         }
 
         public static List<double> Disect(string[] pieces)
@@ -87,7 +102,7 @@ namespace MxAutomation_Example
 
             foreach (var piece in pieces)
             {
-                if (piece.Contains("X"))
+               if (piece.Contains("X") || piece.Contains("A1"))
                 {
                     bits = piece.Split(separators, StringSplitOptions.RemoveEmptyEntries);
                     for (i = 0; i < bits.Count() / 2; i++)
