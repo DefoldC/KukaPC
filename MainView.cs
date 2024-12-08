@@ -111,6 +111,7 @@ namespace MxAutomation_Example
             _overrideToSet = 10;
             _moveToPosPTP = false;
             _moveToPosLIN = false;
+            _moveToPosCIRC = false;
             _axisPosition = new E6AXIS
             {
                 A1 = (float)Convert.ToDouble(textBox1.Text, CultureInfo.InvariantCulture),
@@ -133,25 +134,14 @@ namespace MxAutomation_Example
 
 
             };
-            _cartesianPosition1 = new E6POS
-            {
-                X = (float)Convert.ToDouble(textBox12.Text, CultureInfo.InvariantCulture),
-                Y = (float)Convert.ToDouble(textBox11.Text, CultureInfo.InvariantCulture),
-                Z = (float)Convert.ToDouble(textBox10.Text, CultureInfo.InvariantCulture),
-                A = (float)Convert.ToDouble(textBox9.Text, CultureInfo.InvariantCulture),
-                B = (float)Convert.ToDouble(textBox8.Text, CultureInfo.InvariantCulture),
-                C = (float)Convert.ToDouble(textBox7.Text, CultureInfo.InvariantCulture)
-
-
-            };
             _cartesianPosition2 = new E6POS
             {
-                X = (float)Convert.ToDouble(textBox12.Text, CultureInfo.InvariantCulture),
-                Y = (float)Convert.ToDouble(textBox11.Text, CultureInfo.InvariantCulture),
-                Z = (float)Convert.ToDouble(textBox10.Text, CultureInfo.InvariantCulture),
-                A = (float)Convert.ToDouble(textBox9.Text, CultureInfo.InvariantCulture),
-                B = (float)Convert.ToDouble(textBox8.Text, CultureInfo.InvariantCulture),
-                C = (float)Convert.ToDouble(textBox7.Text, CultureInfo.InvariantCulture)
+                X = (float)Convert.ToDouble(textBox19.Text, CultureInfo.InvariantCulture),
+                Y = (float)Convert.ToDouble(textBox18.Text, CultureInfo.InvariantCulture),
+                Z = (float)Convert.ToDouble(textBox17.Text, CultureInfo.InvariantCulture),
+                A = (float)Convert.ToDouble(textBox16.Text, CultureInfo.InvariantCulture),
+                B = (float)Convert.ToDouble(textBox15.Text, CultureInfo.InvariantCulture),
+                C = (float)Convert.ToDouble(textBox14.Text, CultureInfo.InvariantCulture)
 
 
             };
@@ -205,6 +195,7 @@ namespace MxAutomation_Example
                 {
                     _moveToPosPTP = false;
                     _moveToPosLIN = false;
+                    _moveToPosCIRC = false;
                     _mxAKrcAbort.OnCycle();
                 }
                 else if (_resetCount == 0)
@@ -237,6 +228,20 @@ namespace MxAutomation_Example
                     if (_mxAMoveLinearAbsolute.DONE)
                     {
                         _moveToPosLIN = false;
+                    }
+                    //Move to position 3
+                    _mxAMoveCircAbsolute.AXISGROUPIDX = _axisGroupIdx;
+                    _mxAMoveCircAbsolute.EXECUTECMD = _moveToPosCIRC;
+                    _mxAMoveCircAbsolute.ACTPOSITION = _cartesianPosition1;
+                    _mxAMoveCircAbsolute.CIRCHP = _cartesianPosition2;
+                    _mxAMoveCircAbsolute.VELOCITY = 0;
+                    _mxAMoveCircAbsolute.ACCELERATION = 0;
+                    _mxAMoveCircAbsolute.BUFFERMODE = 2;
+                    _mxAMoveCircAbsolute.OnCycle();
+
+                    if (_mxAMoveCircAbsolute.DONE)
+                    {
+                        _moveToPosCIRC = false;
                     }
                 }
 
@@ -491,6 +496,30 @@ namespace MxAutomation_Example
             }
             _moveToPosLIN = true;
         }
+        private void bMoveToPos3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                _cartesianPosition1.X = (float)Convert.ToDouble(textBox12.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition1.Y = (float)Convert.ToDouble(textBox11.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition1.Z = (float)Convert.ToDouble(textBox10.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition1.A = (float)Convert.ToDouble(textBox9.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition1.B = (float)Convert.ToDouble(textBox8.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition1.C = (float)Convert.ToDouble(textBox7.Text, CultureInfo.InvariantCulture);
+
+                _cartesianPosition2.X = (float)Convert.ToDouble(textBox19.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition2.Y = (float)Convert.ToDouble(textBox18.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition2.Z = (float)Convert.ToDouble(textBox17.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition2.A = (float)Convert.ToDouble(textBox16.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition2.B = (float)Convert.ToDouble(textBox15.Text, CultureInfo.InvariantCulture);
+                _cartesianPosition2.C = (float)Convert.ToDouble(textBox14.Text, CultureInfo.InvariantCulture);
+            }
+            catch (Exception se)
+            {
+                Debug("Text conversation: " + se.Message);
+            }
+            _moveToPosCIRC = true;
+        }
 
         private void button_closeme_Click(object sender, EventArgs e)
         {
@@ -545,5 +574,6 @@ namespace MxAutomation_Example
             }
         }
         #endregion
+
     }
 }
