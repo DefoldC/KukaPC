@@ -156,6 +156,7 @@ namespace MxAutomation_Example
             try
             {
                 ReadAxisGroup();
+                _readKukaFile.Loop(ref _axisPosition,ref _cartesianPosition1,ref _cartesianPosition2,ref _moveToPosPTP,ref _moveToPosLIN,ref _moveToPosCIRC,this);
 
                 // Initialize
                 _mxAInit.AXISGROUPIDX = _axisGroupIdx;
@@ -539,9 +540,13 @@ namespace MxAutomation_Example
         {
             openKukaFile.ShowDialog();  // Событие нажатия кнопки открытия файла и показ проводника
         }
-        private void buttonReadKukaFile_Click(object sender, EventArgs e)
+        private void buttonStartReadKukaFile_Click(object sender, EventArgs e)
         {
-            _readKukaFile.Read(ref _axisPosition,ref _cartesianPosition1,ref _cartesianPosition2);   // Событие нажатия кнопки Старта чтения файла
+            _readKukaFile.start = true;   // Событие нажатия кнопки Старта чтения файла
+        }
+        private void buttonStopReadKukaFile_Click(object sender, EventArgs e)
+        {
+            _readKukaFile.start = false;   // Событие нажатия кнопки Стопа чтения файла
         }
         #endregion
 
@@ -562,7 +567,7 @@ namespace MxAutomation_Example
             }
         }
 
-        private void Debug(string p)
+        public void Debug(string p)
         {
             tbDebug.AppendText("->" + p + Environment.NewLine);
             _counter++;
