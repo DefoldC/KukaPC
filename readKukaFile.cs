@@ -6,97 +6,113 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
 using MxA;
+using System.Timers;
 
 namespace MxAutomation_Example
 {
     class readKukaFile
     {
-        //public string pathKukaFile;  // полный путь до файла (изменяется при нажатии кнопки "Выбрать фаил")
         public char[] separators = new char[] { '{', '}' };
         public string[] pieces = new string[] { };
         public List<double> coords = new List<double> { };
-
+		System.Timers.Timer timer = new System.Timers.Timer(500);
         public StreamReader sr;
         public string line;
         public bool start = false;
+        public bool tick;
         
-        public void init(string pathKukaFile){
-        	sr = new StreamReader(pathKukaFile);
+        public void init(string pathKukaFile){ 
+        	sr = new StreamReader(pathKukaFile);// полный путь до файла (изменяется при нажатии кнопки "Выбрать фаил")
         	line = sr.ReadLine();
+        	timer.Elapsed += new ElapsedEventHandler((sender, e) => {
+                tick = true;
+            });
+        	tick=false;
         }
              
         
-        public void Loop(ref E6AXIS posAx, ref E6POS posCar1, ref E6POS posCar2, ref bool mPTP, ref bool mLIN, ref bool mCIRC,MainView MV)
+        public void Loop(MainView MV)
         {
             //while (line != null)
             //{
-            if(!mPTP && !mLIN && !mCIRC && start){
-            	MV.Debug("исполнение строки:"+line);
-                pieces = line.Split(separators);
-                if (pieces[0].Contains("$"))
+            if (!MV._moveToPosPTP && !MV._moveToPosLIN && !MV._moveToPosCIRC && start) // проверка разрешения перемещения
+            {
+            	if (!tick)
                 {
+                	timer.Start(); // если перемещение разрешено, но таймер не запущен, то запускаем таймер
+                }
+                else // если перемещение разрешено и таймер отработал, то анализируем и исполняем следущую строку
+                {
+            		MV.Debug("исполнение строки:"+line);
+                	pieces = line.Split(separators);
+                	if (pieces[0].Contains("$"))
+                	{
 
-                }
-                else if (pieces[0].Contains("PTP "))
-                {
-                	Debug.Write("PTP ");
-                    coords = Disect(pieces);
-                    foreach (var entry in coords){Debug.Write(entry+" ");}
-                    Debug.WriteLine("");
-                    //Disect(pieces);
-					posAx.A1 = (float)coords[0];
-					posAx.A2 = (float)coords[1];
-					posAx.A3 = (float)coords[2];
-					posAx.A4 = (float)coords[3];
-					posAx.A5 = (float)coords[4];
-					posAx.A6 = (float)coords[5];
-					mPTP = true;			
-                }
-                else if (pieces[0].Contains("LIN "))
-                {
-                    Debug.Write("LIN ");
-                    coords = Disect(pieces);
-                    foreach (var entry in coords){Debug.Write(entry+" ");}
-                    Debug.WriteLine("");
-                    posCar1.X = (float)coords[0];
-                    posCar1.Y = (float)coords[1];
-                    posCar1.Z = (float)coords[2];
-                    posCar1.A = (float)coords[3];
-                    posCar1.B = (float)coords[4];
-                    posCar1.C = (float)coords[5];
-                    mLIN = true;
-                }
-                else if (pieces[0].Contains("CIRC "))
-                {
-                    Debug.Write("CIRC ");
-                    coords = Disect(pieces);
-                    foreach (var entry in coords){Debug.Write(entry+" ");}
-                    Debug.WriteLine("");
-                    posCar1.X = (float)coords[0];
-                    posCar1.Y = (float)coords[1];
-                    posCar1.Z = (float)coords[2];
-                    posCar1.A = (float)coords[3];
-                    posCar1.B = (float)coords[4];
-                    posCar1.C = (float)coords[5];
+                	}
+                	else if (pieces[0].Contains("PTP "))
+                	{
+                		Debug.Write("PTP ");
+                    	coords = Disect(pieces);
+                    	foreach (var entry in coords){Debug.Write(entry+" ");}
+                    	Debug.WriteLine("");
+                    	//Disect(pieces);
+						MV._axisPosition.A1 = (float)coords[0];
+						MV._axisPosition.A2 = (float)coords[1];
+						MV._axisPosition.A3 = (float)coords[2];
+						MV._axisPosition.A4 = (float)coords[3];
+						MV._axisPosition.A5 = (float)coords[4];
+						MV._axisPosition.A6 = (float)coords[5];
+						MV._moveToPosPTP = true;			
+                	}
+                	else if (pieces[0].Contains("LIN "))
+                	{
+                    	Debug.Write("LIN ");
+                    	coords = Disect(pieces);
+                    	foreach (var entry in coords){Debug.Write(entry+" ");}
+                    	Debug.WriteLine("");
+                   		MV._cartesianPosition1.X = (float)coords[0];
+                   		MV._cartesianPosition1.Y = (float)coords[1];
+                   		MV._cartesianPosition1.Z = (float)coords[2];
+                    	MV._cartesianPosition1.A = (float)coords[3];
+                    	MV._cartesianPosition1.B = (float)coords[4];
+                    	MV._cartesianPosition1.C = (float)coords[5];
+                    	MV._moveToPosLIN = true;
+                	}
+                	else if (pieces[0].Contains("CIRC "))
+                	{
+                    	Debug.Write("CIRC ");
+                    	coords = Disect(pieces);
+                    	foreach (var entry in coords){Debug.Write(entry+" ");}
+                    	Debug.WriteLine("");
+                    	MV._cartesianPosition1.X = (float)coords[0];
+                    	MV._cartesianPosition1.Y = (float)coords[1];
+                    	MV._cartesianPosition1.Z = (float)coords[2];
+                    	MV._cartesianPosition1.A = (float)coords[3];
+                    	MV._cartesianPosition1.B = (float)coords[4];
+                    	MV._cartesianPosition1.C = (float)coords[5];
                     	
-                    posCar2.X = (float)coords[6];
-                    posCar2.Y = (float)coords[7];
-                    posCar2.Z = (float)coords[8];
-                    posCar2.A = (float)coords[9];
-                    posCar2.B = (float)coords[10];
-                    posCar2.C = (float)coords[11];
-                    mCIRC = true;
-                }
+                    	MV._cartesianPosition2.X = (float)coords[6];
+                    	MV._cartesianPosition2.Y = (float)coords[7];
+                    	MV._cartesianPosition2.Z = (float)coords[8];
+                    	MV._cartesianPosition2.A = (float)coords[9];
+                    	MV._cartesianPosition2.B = (float)coords[10];
+                    	MV._cartesianPosition2.C = (float)coords[11];
+                    	MV._moveToPosCIRC = true;
+                	}
                     //Debug.WriteLine(pieces[0]);
-                //  foreach (var e in pieces)
-                //    Console.WriteLine(e);
-                line = sr.ReadLine();
+                	//  foreach (var e in pieces)
+                	//    Console.WriteLine(e);
+                	line = sr.ReadLine();
+                    timer.Stop();    // сбрасываем и выключаем таймер
+                    tick = false;
+                }
+
             }
             //}
             //sr.Close();
             //Console.ReadLine();
         }
-
+        
         public static List<double> Disect(string[] pieces)
         {
             List<double> coords = new List<double> { }; // X  Y  Z  A  B  C

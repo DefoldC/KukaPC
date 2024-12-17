@@ -18,6 +18,8 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using MxA;
 using MxAutomation_Example.Properties;
+using System.Threading;
+using System.Timers;
 
 #endregion
 
@@ -35,16 +37,15 @@ namespace MxAutomation_Example
         //Miscellany     
         private int _counter;
         private Point _mouseposition;
-        private bool _moveToPosPTP;
-        private bool _moveToPosLIN;
-        private bool _moveToPosCIRC;
+        public bool _moveToPosPTP;
+        public bool _moveToPosLIN;
+        public bool _moveToPosCIRC;
         private long _myCycle;
         private short _overrideToSet;
         public  E6AXIS _axisPosition;
         public E6POS _cartesianPosition1;
         public  E6POS _cartesianPosition2;
         private IPEndPoint _receiveEndPoint;
-
         //Byte arrays for the communication
         private byte[] _krc4Input;
         private readonly byte[] _krc4Output;
@@ -63,7 +64,6 @@ namespace MxAutomation_Example
         private readonly KRC_WRITEAXISGROUP _mxAWag;
         private readonly KRC_DIAG _mxAKrcDiag;
         private readonly KRC_AUTOSTART _autoStart;
-
         //Communication objects
         private readonly UdpClient _receiveSocket;
         private UdpClient _sendSocket;
@@ -83,7 +83,6 @@ namespace MxAutomation_Example
 
             // init send socket          
             _sendSocket = new UdpClient();
-
             //Initialize the function blocks
             _mxARag = new KRC_READAXISGROUP();
             _mxAWag = new KRC_WRITEAXISGROUP();
@@ -155,9 +154,7 @@ namespace MxAutomation_Example
         {
             try
             {
-                ReadAxisGroup();
-                _readKukaFile.Loop(ref _axisPosition,ref _cartesianPosition1,ref _cartesianPosition2,ref _moveToPosPTP,ref _moveToPosLIN,ref _moveToPosCIRC,this);
-
+                ReadAxisGroup();           
                 // Initialize
                 _mxAInit.AXISGROUPIDX = _axisGroupIdx;
                 _mxAInit.OnCycle();
@@ -244,6 +241,11 @@ namespace MxAutomation_Example
                     {
                         _moveToPosCIRC = false;
                     }
+
+
+                    _readKukaFile.Loop(this); // вызов циклической функции чтения файла
+
+                 
                 }
 
                 WriteAxisGroup();
@@ -579,6 +581,5 @@ namespace MxAutomation_Example
             }
         }
         #endregion
-
     }
 }
